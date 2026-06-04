@@ -105,6 +105,55 @@ static/
 
 ![Manage Students](images/admin%20manage%20student.png)
 
+## Installation Guide
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/nurratiiqah/personalized-study-plan-generator.git
+cd personalized-study-plan-generator
+```
+
+### 2. Install Required Packages
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Prepare Database
+
+Import the provided SQL file into SQLite:
+
+```bash
+sqlite3 database.db < database.db.sql
+```
+
+Alternatively, open the database using DB Browser for SQLite and execute the SQL script.
+
+### 4. Run the Application
+
+```bash
+python app.py
+```
+
+### 5. Access the System
+
+Open a web browser and visit:
+
+```text
+http://127.0.0.1:5000
+```
+
+### Default Accounts
+
+**Admin**
+
+Username: admin
+Password: admin123
+
+**Student**
+
+Use any student account available in the database.
 
 ## Developer
 
