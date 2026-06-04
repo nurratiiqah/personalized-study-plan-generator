@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+<nav>Admin Dashboard</nav>
+
+<div class="app-shell single">
+
+    <main class="main-content wide">
+
+        <!-- PAGE HEADER -->
+        <section class="page-header">
+
+            <div>
+                <p class="eyebrow">Administrator</p>
+
+                <h1>Academic Planning Control Panel</h1>
+
+                <p>
+                    Manage subjects, monitor students,
+                    and maintain curriculum data.
+                </p>
+            </div>
+
+            <a href="/logout" class="btn secondary">
+                Logout
+            </a>
+
+        </section>
+
+        <!-- METRICS -->
+        <section class="metric-grid compact">
+
+            <div class="metric-card">
+                <small>Students</small>
+                <strong>{{ total_students }}</strong>
+            </div>
+
+            <div class="metric-card">
+                <small>Subjects</small>
+                <strong>{{ total_courses }}</strong>
+            </div>
+
+            <div class="metric-card">
+                <small>Programmes</small>
+                <strong>{{ total_programmes }}</strong>
+            </div>
+
+            <div class="metric-card">
+                <small>Result Records</small>
+                <strong>{{ total_results }}</strong>
+            </div>
+
+            <div class="metric-card">
+                <small>At-Risk Students</small>
+                <strong>{{ at_risk }}</strong>
+            </div>
+
+            <div class="metric-card">
+                <small>Failed Records</small>
+                <strong>{{ failed_records }}</strong>
+            </div>
+
+        </section>
+
+        <!-- ACTIONS + NOTES -->
+        <section class="dashboard-two-col">
+
+            <!-- ADMIN ACTIONS -->
+            <div class="card">
+
+                <h2>Admin Actions</h2>
+
+                <div class="button-grid">
+
+                    <!-- MANAGE SUBJECTS -->
+                    <a href="/manage_courses" class="btn">
+                        Manage Subjects
+                    </a>
+
+                    <!-- MANAGE STUDENTS -->
+                    <a href="/manage_students" class="btn">
+                        Manage Students
+                    </a>
+
+                </div>
+
+            </div>
+
+            <!-- NOTES -->
+            <div class="card">
+
+                <h2>System Notes</h2>
+
+                <p>
+                    When subjects are added or removed,
+                    students should regenerate their study plan
+                    so the roadmap follows the latest curriculum.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- RECENT STUDENTS -->
+        <section class="card">
+
+            <h2>Recent Students</h2>
+
+            <div class="clean-table-wrap">
+
+                <table class="clean-table">
+
+                    <thead>
+                        <tr>
+                            <th>Matric</th>
+                            <th>Name</th>
+                            <th>Programme</th>
+                            <th>CGPA</th>
+                            <th>Credits</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for s in recent_students %}
+
+                        <tr>
+                            <td>{{ s.matric_no }}</td>
+                            <td>{{ s.name }}</td>
+                            <td>{{ s.programme_code }}</td>
+                            <td>{{ '%.2f'|format(s.cgpa) }}</td>
+                            <td>{{ s.credits_completed }}</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

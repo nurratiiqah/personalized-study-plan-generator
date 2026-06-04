@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UNIMAS Student Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<nav>
+    <span>UNIMAS Study Plan System</span>
+</nav>
+
+<div class="app-shell">
+    <aside class="sidebar">
+        <a href="/dashboard" class="side-btn active">Dashboard</a>
+        <a href="/generate_recommendation" class="side-btn">Generate Smart Study Plan</a>
+        <a href="/study_plan" class="side-btn">View Study Plan</a>
+        <a href="/update_result" class="side-btn">Update Result</a>
+        <a href="/logout" class="side-btn logout-btn">Logout</a>
+    </aside>
+
+    <main class="main-content">
+        <section class="page-header">
+            <div>
+                <p class="eyebrow">Student Dashboard</p>
+                <h1>Hello, {{ student.name }}</h1>
+                <p>{{ student.programme_name or student.programme_code }} · Semester {{ current_sem }}</p>
+            </div>
+            <span class="status-pill {{ color }}">{{ risk }}</span>
+        </section>
+
+        <section class="metric-grid dashboard-metrics">
+            <div class="metric-card"><small>Matric No.</small><strong>{{ student.matric_no }}</strong></div>
+            <div class="metric-card"><small>Programme</small><strong>{{ student.programme_code }}</strong></div>
+            <div class="metric-card"><small>CGPA</small><strong>{{ '%.2f'|format(cgpa) }}</strong></div>
+            <div class="metric-card"><small>Academic Position</small><strong>Y{{ student.current_year }} S{{ student.current_semester }}</strong></div>
+            <div class="metric-card"><small>Credits Completed</small><strong>{{ credits_completed }}/{{ total_credits or 120 }}</strong></div>
+            <div class="metric-card"><small>Credit Limit</small><strong>{{ max_credit }} credits</strong></div>
+        </section>
+
+        <section class="dashboard-two-col">
+            <div class="card progress-card">
+                <div class="card-title-row">
+                    <div>
+                        <h2>Graduation Progress</h2>
+                        <p>{{ remaining }} credits remaining</p>
+                    </div>
+                    <strong>{{ progress }}%</strong>
+                </div>
+                <div class="progress-track"><div class="progress-fill" style="width: {{ progress }}%"></div></div>
+                <div class="mini-stats">
+                    <span>Passed: {{ credits_completed }}</span>
+                    <span>Attempted: {{ attempted_credits }}</span>
+                    <span>Failed: {{ failed_count }}</span>
+                </div>
+            </div>
+
+            <div class="card recommendation-card">
+                <h2>AI Academic Recommendation</h2>
+                <p>{{ ai_message }}</p>
+                <div class="prediction-box {{ pred_color }}-soft">
+                    <b>Graduation Prediction</b>
+                    <span>{{ prediction }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="metric-grid">
+            <div class="mini-feature card">
+                <small>Current Semester Load</small>
+                <h3>{{ current_load }}/{{ max_credit }}</h3>
+                <p>Used credit based on latest generated plan.</p>
+            </div>
+            <div class="mini-feature card">
+                <small>Electives Selected</small>
+                <h3>{{ elective_count }}/3</h3>
+                <p>Maximum 3 electives from maximum 2 clusters.</p>
+            </div>
+            <div class="mini-feature card">
+                <small>Study Plan Status</small>
+                <h3>{{ plan_count }} rows</h3>
+                <p>Regenerate after updating results or curriculum.</p>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-title-row">
+                <div>
+                    <h2>Upcoming Planned Courses</h2>
+                    <p>Preview from your latest generated study plan.</p>
+                </div>
+                <a href="/study_plan" class="btn secondary">View Full Plan</a>
+            </div>
+            {% if upcoming %}
+            <div class="clean-table-wrap">
+                <table class="clean-table">
+                    <thead><tr><th>Semester</th><th>Code</th><th>Subject</th><th>Credit</th><th>Status</th></tr></thead>
+                    <tbody>
+                    {% for row in upcoming %}
+                    <tr>
+                        <td>Semester {{ row.semester }}</td>
+                        <td>{{ row.course_code }}</td>
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.credit }}</td>
+                        <td><span class="status-badge {{ row.status|lower|replace(' ', '-')|replace('---','-') }}">{{ row.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">No study plan generated yet. Click Generate Smart Study Plan to build your roadmap.</div>
+            {% endif %}
+        </section>
+    </main>
+</div>
+</body>
+</html>

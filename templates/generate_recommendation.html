@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Smart Study Plan</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<nav>Generate Smart Study Plan</nav>
+<div class="app-shell single">
+    <main class="main-content wide">
+        <section class="page-header smart-hero">
+            <div>
+                <p class="eyebrow">CSP Planning Engine</p>
+                <h1>Smart Academic Recommendation</h1>
+                <p>The system checks CGPA, failed subjects, prerequisites, credit limit, electives, and graduation requirements.</p>
+            </div>
+            <a href="/dashboard" class="btn secondary light">Back</a>
+        </section>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}<div class="alert-card warning">{{ msg }}</div>{% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="metric-grid compact">
+            <div class="metric-card"><small>CGPA</small><strong>{{ '%.2f'|format(student.cgpa) }}</strong></div>
+            <div class="metric-card"><small>Programme</small><strong>{{ student.programme_code }}</strong></div>
+            <div class="metric-card"><small>Allowed Credits</small><strong>{{ credit_allowed }}</strong></div>
+            <div class="metric-card"><small>Suggested Slot</small><strong>Sem {{ suggested_semester }}</strong></div>
+            <div class="metric-card"><small>Current Load</small><strong>{{ current_load }}/{{ credit_allowed }}</strong></div>
+            <div class="metric-card"><small>Available Credit</small><strong>{{ remaining_credit }}</strong></div>
+        </section>
+
+        <section class="dashboard-two-col">
+            <div class="card">
+                <h2>Academic Check</h2>
+                {% if failed_codes %}
+                    <div class="alert-card danger"><b>Failed Subject Detected</b><p>{{ failed_codes|join(', ') }}</p></div>
+                {% else %}
+                    <div class="alert-card success"><b>No Failed Subjects</b><p>No retake requirement detected from latest results.</p></div>
+                {% endif %}
+                <div class="alert-card info"><b>Elective Rule</b><p>Maximum 3 electives from maximum 2 clusters. Electives are only suggested when there is available credit space.</p></div>
+            </div>
+
+            <div class="card">
+                <h2>Selected Electives</h2>
+                {% if chosen_electives %}
+                    <div class="chip-list">
+                    {% for e in chosen_electives %}
+                    <span class="chip">
+                        {{ e.code }} · Cluster {{ e.cluster_no }}
+
+                        <a href="/remove_elective/{{ e.code }}"
+                        onclick="return confirm('Remove this elective?')"
+                        style="margin-left:8px;color:#dc2626;font-weight:bold;">
+                        ×
+                        </a>
+                    </span>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">No elective selected yet.</div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="card-title-row">
+                <div>
+                    <h2>Elective Slot</h2>
+                    <p>Select one elective at a time. The system will insert it into an available non-industrial semester.</p>
+                </div>
+                <span class="status-pill blue">{{ chosen_electives|length }}/{{ max_electives }} selected</span>
+            </div>
+
+            {% if allow_elective %}
+            <form method="POST" action="/add_elective_to_plan" class="elective-form">
+                <input type="hidden" name="semester" value="{{ suggested_semester }}">
+                <label>Choose elective by cluster</label>
+                <select name="course_code" required>
+                    <option value="">-- Select elective subject --</option>
+                    {% for cluster_label, items in elective_clusters.items() %}
+                    <optgroup label="{{ cluster_label }}">
+                        {% for e in items %}
+                        <option value="{{ e.code }}">{{ e.code }} - {{ e.name }} ({{ e.credit }} credits)</option>
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
+                </select>
+                <button class="btn" type="submit">Add Elective to Semester {{ suggested_semester }}</button>
+            </form>
+            {% else %}
+            <div class="empty-state">No elective slot is available now. Generate a plan first, or wait until the system detects at least 3 available credits in a non-industrial semester.</div>
+            {% endif %}
+        </section>
+
+        <section class="card">
+            <div class="card-title-row">
+                <div>
+                    <h2>Programme Curriculum Reference</h2>
+                    <p>Official core subjects used by the planner.</p>
+                </div>
+                <a href="/generate_plan" class="btn">Generate New Study Plan</a>
+            </div>
+            <div class="clean-table-wrap">
+                <table class="clean-table">
+                    <thead><tr><th>Year</th><th>Semester</th><th>Code</th><th>Subject</th><th>Credit</th></tr></thead>
+                    <tbody>
+                    {% for c in courses %}
+                    <tr><td>{{ c.year_no }}</td><td>{{ c.semester_no }}</td><td>{{ c.code }}</td><td>{{ c.name }}</td><td>{{ c.credit }}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

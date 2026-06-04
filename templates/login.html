@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ role }} Login</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="login-box">
+
+        <h1>{{ role }} Login</h1>
+
+        <form method="POST">
+
+            {% if role == "Student" %}
+
+                <input
+                    type="text"
+                    name="matric_no"
+                    placeholder="Matric Number"
+                    required
+                >
+
+            {% else %}
+
+                <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    required
+                >
+
+            {% endif %}
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                >
+
+                <span
+                    class="toggle-password"
+                    onclick="togglePassword()"
+                >
+                    👁
+                </span>
+
+            </div>
+
+            <button type="submit">
+                Login
+            </button>
+
+        </form>
+
+        <a href="/" class="back-btn">
+            ← Back
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+function togglePassword() {
+
+    const password = document.getElementById("password");
+
+    if (password.type === "password") {
+        password.type = "text";
+    }
+    else {
+        password.type = "password";
+    }
+}
+
+</script>
+
+</body>
+</html>

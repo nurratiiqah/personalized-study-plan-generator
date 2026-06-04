@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Students</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+<nav>Manage Students</nav>
+
+<div class="app-shell single">
+
+    <main class="main-content wide">
+
+        <section class="page-header">
+
+            <div>
+                <p class="eyebrow">Student Management</p>
+                <h1>Manage Students</h1>
+                <p>
+                    Add, update, remove, and search students registered
+                    in the personalized study plan system.
+                </p>
+            </div>
+
+            <a href="/admin_dashboard" class="btn secondary">
+                Back
+            </a>
+
+        </section>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert-card success">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="card form-card">
+
+            <h2 id="formTitle">Add New Student</h2>
+
+            <form method="POST" class="course-form-grid" id="studentForm">
+
+                <input type="hidden" name="student_id" id="student_id">
+
+                <input
+                    type="text"
+                    name="matric_no"
+                    id="matric_no"
+                    placeholder="Matric Number"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="name"
+                    id="name"
+                    placeholder="Student Name"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="password"
+                    id="password"
+                    placeholder="Password"
+                    required
+                >
+
+                <select name="programme_code" id="programme_code" required>
+                    <option value="">Select Programme</option>
+                    <option value="IS">Information Systems</option>
+                    <option value="SE">Software Engineering</option>
+                    <option value="MC">Multimedia Computing</option>
+                    <option value="NC">Network Computing</option>
+                    <option value="CS">Computational Science</option>
+                </select>
+
+                <input
+                    type="number"
+                    name="current_year"
+                    id="current_year"
+                    placeholder="Current Year"
+                    min="1"
+                    max="6"
+                    required
+                >
+
+                <select name="current_semester" id="current_semester" required>
+                    <option value="">Current Semester</option>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                </select>
+
+                <button type="submit" class="btn" id="submitBtn">
+                    Save Student
+                </button>
+
+                <button type="button" class="btn secondary" onclick="resetForm()">
+                    Clear Form
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="card">
+
+            <div class="card-title-row">
+                <div>
+                    <h2>Student List</h2>
+                    <p>
+                        Use search and programme filter to manage students easily.
+                    </p>
+                </div>
+            </div>
+
+            <div class="course-form-grid" style="margin-bottom:16px;">
+                <input
+                    type="text"
+                    id="studentSearch"
+                    placeholder="Search by matric number or name..."
+                >
+
+                <select id="programmeFilter">
+                    <option value="">All Programmes</option>
+                    <option value="IS">Information Systems</option>
+                    <option value="SE">Software Engineering</option>
+                    <option value="MC">Multimedia Computing</option>
+                    <option value="NC">Network Computing</option>
+                    <option value="CS">Computational Science</option>
+                </select>
+            </div>
+
+            <div class="clean-table-wrap">
+
+                <table class="clean-table">
+
+                    <thead>
+                        <tr>
+                            <th>Matric No.</th>
+                            <th>Name</th>
+                            <th>Programme</th>
+                            <th>Year</th>
+                            <th>Semester</th>
+                            <th>CGPA</th>
+                            <th>Credits</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="studentTable">
+
+                        {% for s in students %}
+
+                        <tr>
+                            <td>{{ s.matric_no }}</td>
+                            <td>{{ s.name }}</td>
+                            <td>{{ s.programme_code }}</td>
+                            <td>{{ s.current_year }}</td>
+                            <td>{{ s.current_semester }}</td>
+                            <td>{{ '%.2f'|format(s.cgpa) }}</td>
+                            <td>{{ s.credits_completed }}</td>
+
+                            <td>
+                                <button
+                                    type="button"
+                                    class="btn small"
+                                    onclick="editStudent(
+                                        '{{ s.id }}',
+                                        '{{ s.matric_no }}',
+                                        '{{ s.name }}',
+                                        '{{ s.password }}',
+                                        '{{ s.programme_code }}',
+                                        '{{ s.current_year }}',
+                                        '{{ s.current_semester }}'
+                                    )"
+                                >
+                                    Edit
+                                </button>
+
+                                <a
+                                    href="/delete_student/{{ s.id }}"
+                                    onclick="return confirm('Delete this student and all related records?')"
+                                    class="btn danger small"
+                                >
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+function editStudent(id, matric, name, password, programme, year, semester) {
+    document.getElementById("formTitle").innerText = "Modify Student Information";
+    document.getElementById("submitBtn").innerText = "Update Student";
+
+    document.getElementById("student_id").value = id;
+    document.getElementById("matric_no").value = matric;
+    document.getElementById("name").value = name;
+    document.getElementById("password").value = password;
+    document.getElementById("programme_code").value = programme;
+    document.getElementById("current_year").value = year;
+    document.getElementById("current_semester").value = semester;
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+function resetForm() {
+    document.getElementById("formTitle").innerText = "Add New Student";
+    document.getElementById("submitBtn").innerText = "Save Student";
+    document.getElementById("studentForm").reset();
+    document.getElementById("student_id").value = "";
+}
+
+const searchInput = document.getElementById("studentSearch");
+const programmeFilter = document.getElementById("programmeFilter");
+
+function filterStudents() {
+    const search = searchInput.value.toLowerCase();
+    const programme = programmeFilter.value.toLowerCase();
+
+    document.querySelectorAll("#studentTable tr").forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const rowProgramme = row.children[2].innerText.toLowerCase();
+
+        const matchSearch = text.includes(search);
+        const matchProgramme = !programme || rowProgramme.includes(programme);
+
+        row.style.display = matchSearch && matchProgramme ? "" : "none";
+    });
+}
+
+searchInput.addEventListener("keyup", filterStudents);
+programmeFilter.addEventListener("change", filterStudents);
+</script>
+
+</body>
+</html>

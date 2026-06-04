@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Manage Subjects</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<nav>Manage Subjects</nav>
+
+<div class="app-shell single">
+
+    <main class="main-content wide">
+
+        <!-- PAGE HEADER -->
+        <section class="page-header">
+
+            <div>
+
+                <p class="eyebrow">
+                    Curriculum Management
+                </p>
+
+                <h1>Manage Subjects</h1>
+
+                <p>
+                    Subjects are grouped by category
+                    to keep the list clean and readable.
+                </p>
+
+            </div>
+
+            <a href="/admin_dashboard" class="btn secondary">
+                Back
+            </a>
+
+        </section>
+
+        <!-- FLASH MESSAGE -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+            {% for msg in messages %}
+
+                <div class="alert-card success">
+                    {{ msg }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+        {% endwith %}
+
+        <!-- ADD SUBJECT FORM -->
+        <section class="card form-card">
+
+            <h2>Add New Subject</h2>
+
+            <form method="POST" class="course-form-grid">
+
+                <!-- SUBJECT CODE -->
+                <input type="text"
+                       name="code"
+                       placeholder="Subject Code"
+                       required>
+
+                <!-- SUBJECT NAME -->
+                <input type="text"
+                       name="name"
+                       placeholder="Subject Name"
+                       required>
+
+                <!-- CREDIT HOUR -->
+                <input type="number"
+                       name="credit"
+                       placeholder="Credit Hour"
+                       required>
+
+                <!-- PROGRAMME -->
+                <select name="programme_code" required>
+
+                    <option value="">
+                        Select Programme
+                    </option>
+
+                    <option value="IS">
+                        Information Systems
+                    </option>
+
+                    <option value="SE">
+                        Software Engineering
+                    </option>
+
+                    <option value="MC">
+                        Multimedia Computing
+                    </option>
+
+                    <option value="NC">
+                        Network Computing
+                    </option>
+
+                    <option value="CS">
+                        Computational Science
+                    </option>
+
+                </select>
+
+                <!-- CATEGORY -->
+                <select name="category" required>
+
+                    <option value="Core">
+                        Core
+                    </option>
+
+                    <option value="MPU">
+                        MPU
+                    </option>
+
+                    <option value="Elective">
+                        Elective
+                    </option>
+
+                </select>
+
+                <!-- YEAR -->
+                <input type="number"
+                       name="year_no"
+                       placeholder="Year"
+                       min="1"
+                       max="5"
+                       required>
+
+                <!-- SEMESTER -->
+                <select name="semester_no" required>
+
+                    <option value="1">
+                        Semester 1
+                    </option>
+
+                    <option value="2">
+                        Semester 2
+                    </option>
+
+                </select>
+
+                <!-- ELECTIVE CLUSTER -->
+                <input type="number"
+                       name="cluster_no"
+                       placeholder="Elective Cluster No">
+
+                <!-- CLUSTER NAME -->
+                <input type="text"
+                       name="cluster_name"
+                       placeholder="Elective Cluster Name">
+
+                <!-- FACULTY -->
+                <input type="text"
+                       name="faculty"
+                       placeholder="Faculty">
+
+                <!-- BUTTON -->
+                <button type="submit" class="btn">
+                    Save Subject
+                </button>
+
+                <button type="button" class="btn secondary" onclick="clearSubjectForm()">
+                    Clear Form
+                </button>
+
+            </form>
+
+        </section>
+
+        <section class="card">
+            <h2>Find Subject</h2>
+
+            <div class="course-form-grid">
+                <input type="text" id="subjectSearch" placeholder="Search by code, name, programme, or category...">
+
+                <select id="programmeFilter">
+                    <option value="">All Programmes</option>
+                    <option value="IS">Information Systems</option>
+                    <option value="SE">Software Engineering</option>
+                    <option value="MC">Multimedia Computing</option>
+                    <option value="NC">Network Computing</option>
+                    <option value="CS">Computational Science</option>
+                </select>
+
+                <select id="categoryFilter">
+                    <option value="">All Categories</option>
+                    <option value="Core">Core</option>
+                    <option value="MPU">MPU</option>
+                    <option value="Elective">Elective</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- SUBJECT LIST -->
+        <section class="card">
+
+            <h2>Subject List</h2>
+
+        </section>
+
+        <!-- GROUPED SUBJECTS -->
+        {% for category, courses in grouped_courses.items() %}
+
+        <section class="card">
+
+            <details open>
+
+                <summary class="category-summary">
+
+                    {{ category }} Subjects
+
+                    <span>
+                        {{ courses|length }}
+                    </span>
+
+                </summary>
+
+                <div class="clean-table-wrap">
+
+                    <table class="clean-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Credit</th>
+                                <th>Programme</th>
+                                <th>Year</th>
+                                <th>Semester</th>
+                                <th>Cluster</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for row in courses %}
+
+                            <tr>
+
+                                <td>{{ row.code }}</td>
+
+                                <td>{{ row.name }}</td>
+
+                                <td>{{ row.credit }}</td>
+
+                                <td>
+                                    {{ row.programme_code or '-' }}
+                                </td>
+
+                                <td>
+                                    {{ row.year_no or '-' }}
+                                </td>
+
+                                <td>
+                                    {{ row.semester_no or '-' }}
+                                </td>
+
+                                <td>
+
+                                    {% if row.cluster_no %}
+
+                                        {{ row.cluster_no }}
+                                        -
+                                        {{ row.cluster_name }}
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    <button
+                                        type="button"
+                                        class="btn small"
+                                        onclick="editSubject(
+                                            '{{ row.code }}',
+                                            '{{ row.name }}',
+                                            '{{ row.credit }}',
+                                            '{{ row.programme_code }}',
+                                            '{{ row.category }}',
+                                            '{{ row.year_no }}',
+                                            '{{ row.semester_no }}',
+                                            '{{ row.cluster_no }}',
+                                            '{{ row.cluster_name }}',
+                                            '{{ row.faculty }}'
+                                        )">
+
+                                        Edit
+
+                                    </button>
+
+                                    <a href="/delete_course/{{ row.code }}"
+                                    onclick="return confirm('Delete this subject and related records?')"
+                                    class="btn danger small">
+
+                                        Delete
+
+                                    </a>
+
+                                </td>
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </details>
+
+        </section>
+
+        {% endfor %}
+
+    </main>
+
+</div>
+
+<script>
+const searchInput = document.getElementById("subjectSearch");
+const programmeFilter = document.getElementById("programmeFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+
+function filterSubjects() {
+    const search = searchInput.value.toLowerCase();
+    const programme = programmeFilter.value.toLowerCase();
+    const category = categoryFilter.value.toLowerCase();
+
+    document.querySelectorAll("tbody tr").forEach(row => {
+        const text = row.innerText.toLowerCase();
+        const rowProgramme = row.children[3]?.innerText.toLowerCase() || "";
+        const rowCategory = row.closest("section")?.querySelector("summary")?.innerText.toLowerCase() || "";
+
+        const matchSearch = text.includes(search);
+        const matchProgramme = !programme || rowProgramme.includes(programme);
+        const matchCategory = !category || rowCategory.includes(category);
+
+        row.style.display = matchSearch && matchProgramme && matchCategory ? "" : "none";
+    });
+}
+
+searchInput.addEventListener("keyup", filterSubjects);
+programmeFilter.addEventListener("change", filterSubjects);
+categoryFilter.addEventListener("change", filterSubjects);
+</script>
+
+<script>
+function editSubject(code, name, credit, programme, category, year, semester, clusterNo, clusterName, faculty){
+    document.querySelector("input[name='code']").value = code;
+    document.querySelector("input[name='name']").value = name;
+    document.querySelector("input[name='credit']").value = credit;
+    document.querySelector("select[name='programme_code']").value = programme;
+    document.querySelector("select[name='category']").value = category;
+    document.querySelector("input[name='year_no']").value = year;
+    document.querySelector("select[name='semester_no']").value = semester;
+    document.querySelector("input[name='cluster_no']").value = clusterNo;
+    document.querySelector("input[name='cluster_name']").value = clusterName;
+    document.querySelector("input[name='faculty']").value = faculty;
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function clearSubjectForm(){
+    document.querySelector(".course-form-grid").reset();
+}
+</script>
+
+</body>
+</html>

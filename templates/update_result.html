@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Update Result</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<nav>Update Semester Result</nav>
+<div class="app-shell single">
+<main class="main-content">
+<section class="page-header">
+    <div><p class="eyebrow">Student Result</p><h1>Update Semester Result</h1><p>After saving, CGPA, credits completed, retake logic, and study plan are recalculated automatically.</p></div>
+    <a href="/dashboard" class="btn secondary">Back</a>
+</section>
+
+<section class="card form-card">
+<form method="POST" class="clean-form">
+    <label>Semester</label>
+    <input type="number" name="semester" value="{{ current_sem }}" min="1" required>
+
+    <label>Subject</label>
+    <select name="course_code" required>
+        <option value="">-- Choose subject --</option>
+        {% for c in courses %}<option value="{{ c.code }}">{{ c.code }} - {{ c.name }} ({{ c.credit }} credits)</option>{% endfor %}
+    </select>
+
+    <label>Grade</label>
+    <select name="grade" required>
+        <option value="">-- Choose grade --</option>
+        {% for g in grades %}<option value="{{ g }}">{{ g }}</option>{% endfor %}
+    </select>
+    <button type="submit" class="btn">Save Result & Recalculate Plan</button>
+</form>
+</section>
+
+<section class="card">
+<h2>Result History</h2>
+<div class="clean-table-wrap">
+<table class="clean-table">
+<thead><tr><th>Semester</th><th>Code</th><th>Subject</th><th>Grade</th></tr></thead>
+<tbody>{% for r in history %}<tr><td>{{ r.semester }}</td><td>{{ r.course_code }}</td><td>{{ r.name }}</td><td>{{ r.grade }}</td></tr>{% endfor %}</tbody>
+</table>
+</div>
+</section>
+</main>
+</div>
+</body>
+</html>

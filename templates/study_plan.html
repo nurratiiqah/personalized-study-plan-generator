@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Academic Roadmap</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<nav>Academic Roadmap</nav>
+<div class="app-shell single">
+    <main class="main-content wide">
+        <section class="page-header">
+            <div>
+                <p class="eyebrow">Latest Generated Study Plan</p>
+                <h1>Semester-by-Semester Roadmap</h1>
+                <p>Grades come automatically from Update Result. Future subjects remain blank until results are updated.</p>
+            </div>
+            <div class="action-row"><a href="/generate_plan" class="btn">Regenerate</a><a href="/dashboard" class="btn secondary">Back</a></div>
+        </section>
+
+        {% if semester_groups %}
+            {% for sem, rows in semester_groups.items() %}
+            <section class="card semester-block">
+                <div class="semester-head">
+                    <h2>{% if sem > 8 %}Extended Semester {{ sem }}{% else %}Semester {{ sem }}{% endif %}</h2>
+                    <span>{{ semester_totals[sem] }} credits</span>
+                </div>
+
+                <div class="clean-table-wrap">
+                    <table class="clean-table fixed">
+                        <thead>
+                            <tr><th class="code-col">Code</th><th>Subject</th><th class="credit-col">Credit</th><th class="grade-col">Grade</th><th class="status-col">Status</th></tr>
+                        </thead>
+                        <tbody>
+                        {% for row in rows %}
+                        <tr>
+                            <td class="code-col">{{ row.course_code }}</td>
+                            <td>{{ row.name }}</td>
+                            <td class="credit-col">{{ row.credit }}</td>
+                            <td class="grade-col">{{ row.grade if row.grade else '' }}</td>
+                            <td class="status-col"><span class="status-badge {{ row.status|lower|replace(' ', '-')|replace('---','-') }}">{{ row.status }}</span></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            {% endfor %}
+        {% else %}
+            <section class="card empty-state">No study plan generated yet. Go to Generate Smart Study Plan first.</section>
+        {% endif %}
+    </main>
+</div>
+</body>
+</html>
