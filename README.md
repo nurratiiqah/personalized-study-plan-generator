@@ -58,6 +58,54 @@ templates/
 static/
 ```
 
+## Key Features
+
+- Student Login
+- Admin Login
+- Smart Study Plan Generation
+- Rule-Based Prerequisite Validation
+- Failed Subject Retake Scheduling
+- Graduation Readiness Monitoring
+- Industrial Training Planning
+- FYP I & FYP II Dependency Validation
+- Elective Recommendation
+- Extended Semester Support
+
+## System Screenshots
+
+### Student Login
+
+![Student Login](images/student%20login.png)
+
+### Student Dashboard
+
+![Dashboard](images/student%20dashboard.png)
+
+### Generate Study Plan
+
+![Generate Plan](images/generate%20plan.png)
+
+### Study Plan
+
+![Study Plan](images/study%20plan.png)
+
+### Update Result
+
+![Update Result](images/update%20result.png)
+
+### Admin Dashboard
+
+![Admin Dashboard](images/admin%20dashboard.png)
+
+### Manage Subjects
+
+![Manage Subjects](images/admin%20manage%20subject.png)
+
+### Manage Students
+
+![Manage Students](images/admin%20manage%20student.png)
+
+
 ## Developer
 
 Nur Atiqah Aziera Binti Khamijas
